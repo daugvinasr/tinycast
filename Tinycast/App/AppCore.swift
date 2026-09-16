@@ -117,6 +117,8 @@ final class AppCore {
         settings: settings, appIndex: appIndex, hotKeys: hotKeys, favorites: favorites,
         visibility: visibility, ranking: launcherRanking, aliases: aliases,
         paletteCoordinator: paletteCoordinator, core: self)
+    @ObservationIgnored private(set) lazy var recentProjectCoordinator = RecentProjectCoordinator(
+        settings: settings, appIndex: appIndex, paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var notesCoordinator = NotesCoordinator(
         store: notesStore,
         settings: settings,
@@ -255,6 +257,7 @@ final class AppCore {
             quicklinks.load()
             quicklinkCoordinator.applyQuicklinksPresence()
             appleShortcutCoordinator.applyPresence()
+            recentProjectCoordinator.applyPresence()
             paletteCoordinator.onLauncherShown = { [weak self] in
                 self?.appleShortcutCoordinator.refresh()
             }
@@ -510,6 +513,11 @@ final class AppCore {
         track(
             { _ = $0.appleShortcutsEnabled },
             reproject: { $0.appleShortcutCoordinator.applyPresence() })
+        track(
+            {
+                _ = $0.recentProjectsEnabled
+                _ = $0.recentProjectsEditor
+            }, reproject: { $0.recentProjectCoordinator.applyPresence() })
         track(
             { _ = $0.clipboardEnabled }, reproject: { $0.clipboardCoordinator.applyEnabled() })
         track(

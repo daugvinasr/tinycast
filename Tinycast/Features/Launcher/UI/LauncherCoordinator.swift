@@ -204,6 +204,8 @@ final class LauncherCoordinator {
             paletteCoordinator.togglePalette(mode: .quicklinks)
         case .searchSnippets:
             snippetCoordinator.showSnippets()
+        case .searchRecentProjects:
+            core.recentProjectCoordinator.showProjects()
         case .createSnippet:
             dismissPalette()
             snippetCoordinator.editSnippet(nil)

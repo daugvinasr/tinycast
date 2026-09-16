@@ -44,6 +44,7 @@ enum SettingsBackupCoverage {
         "quicklinkSelectionFallback": .quicklinkSelectionFallback,
         "quicklinkConfirmsBeforeDelete": .quicklinkConfirmsBeforeDelete,
         "appleShortcutsEnabled": .appleShortcutsEnabled,
+        "recentProjectsEnabled": .recentProjectsEnabled,
         "extensionsShowInLauncher": .extensionsShowInLauncher,
         "calendarShowInLauncher": .calendarShowInLauncher,
         "calendarLauncherLimit": .calendarLauncherLimit,
@@ -78,6 +79,8 @@ enum SettingsBackupCoverage {
             + "something else there.",
         AppSettingsKey.extensionsEnabled.rawValue:
             "Doubles as consent to run third-party JavaScript; an import must not switch it on.",
+        AppSettingsKey.recentProjectsEditor.rawValue:
+            "Names an editor installed on this Mac; the machine a backup lands on may not have it.",
         AppSettingsKey.palettePosition.rawValue:
             "Machine-local geometry: every entry names a display this Mac has, and no other one.",
         AppSettingsKey.autoSwitchInputSource.rawValue:

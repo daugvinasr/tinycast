@@ -222,6 +222,7 @@ run hover-arming-test      Tinycast/Palette/HoverArming.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run palette-escape-test    Tinycast/Palette/PaletteMode.swift \
@@ -229,6 +230,7 @@ run palette-escape-test    Tinycast/Palette/PaletteMode.swift \
                            Tinycast/Palette/CommandEscapeTap.swift \
                            Tinycast/Features/Settings/EscapeKeyBehavior.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run palette-navigation-test Tinycast/Palette/PaletteState.swift \
@@ -242,17 +244,20 @@ run palette-navigation-test Tinycast/Palette/PaletteState.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run palette-filter-test    Tinycast/Palette/PaletteMode.swift \
                            Tinycast/Palette/PaletteFilterAction.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run palette-shortcut-test  Tinycast/Palette/PaletteShortcut.swift
 run palette-tab-test       Tinycast/Palette/PaletteMode.swift \
                            Tinycast/Palette/PaletteTabAction.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run fallback-test          Tinycast/Features/Launcher/Model/Fallback.swift \
@@ -262,6 +267,7 @@ run fallback-test          Tinycast/Features/Launcher/Model/Fallback.swift \
                            Tinycast/Features/QuickActions/Model/BuiltInQuickAction.swift \
                            Tinycast/Features/QuickActions/Model/CustomQuickAction.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/SystemActions/Model/SystemAction.swift \
                            Tinycast/Features/WindowManagement/Model/WindowCommand.swift
@@ -276,6 +282,7 @@ run hotkey-test            Tinycast/Features/HotKeys/Model/DoubleTapModifier.swi
                            Tinycast/Features/QuickActions/Model/CustomQuickAction.swift \
                            Tinycast/Features/Launcher/Model/CommandID.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                           Tinycast/Features/RecentProjects/Model/RecentProject.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/SystemActions/Model/SystemAction.swift \
                            Tinycast/Features/WindowManagement/Model/WindowCommand.swift
@@ -335,6 +342,7 @@ run uninstall-test         Tinycast/Features/Uninstall/Model/UninstallTarget.swi
                            Tinycast/Features/Uninstall/Model/UninstallRules.swift \
                            Tinycast/Features/Uninstall/Model/UninstallProtection.swift \
                            Tinycast/Features/Uninstall/Model/UninstallPlan.swift
+run recent-project-test    Tinycast/Features/RecentProjects/Model/*.swift
 run quicklink-test         Tinycast/Features/Quicklinks/Model/Quicklink.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkStore.swift \

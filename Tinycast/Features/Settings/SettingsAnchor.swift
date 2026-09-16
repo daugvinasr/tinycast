@@ -32,6 +32,11 @@ extension SettingsAnchor {
     static let appleShortcutsAppleShortcuts = Self(tab: .appleShortcuts, title: "Apple Shortcuts")
     static let appleShortcutsShortcuts = Self(tab: .appleShortcuts, title: "Shortcuts")
 
+    static let recentProjectsRecentProjects = Self(
+        tab: .recentProjects, title: "Recent Projects")
+    static let recentProjectsCommands = Self(tab: .recentProjects, title: "Commands")
+    static let recentProjectsEditor = Self(tab: .recentProjects, title: "Editor")
+
     static let fallbacksFallbacks = Self(tab: .fallbacks, title: "Fallbacks")
 
     static let aiAI = Self(tab: .ai, title: "AI")
