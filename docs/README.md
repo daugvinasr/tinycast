@@ -37,6 +37,7 @@ open with an `## Invariants` section; read it before changing anything in that a
 [snippets](features/snippets.md) ·
 [quicklinks](features/quicklinks.md) ·
 [Apple Shortcuts](features/apple-shortcuts.md) ·
+[recent projects](features/recent-projects.md) ·
 [hotkeys](features/hotkeys.md) ·
 [navigation](features/navigation.md) ·
 [window management](features/window-management.md) ·

@@ -62,10 +62,7 @@ struct RecentProjectsSettingsView: View {
     /// The installed builds, plus whatever is already chosen so a picker never shows blank.
     private var editors: [EditorBuild] {
         let installed = coordinator.installedBuilds
-        guard let chosen = EditorBuild.named(settings.recentProjectsEditor),
-            !installed.contains(chosen)
-        else { return installed.isEmpty ? [coordinator.build] : installed }
-        return installed + [chosen]
+        return installed.contains(coordinator.build) ? installed : installed + [coordinator.build]
     }
 
     private var footer: String {

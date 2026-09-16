@@ -6,8 +6,8 @@ import AppKit
 final class RecentProjectCoordinator {
     /// The editor's own list, as last read; the screen and the open funnel both resolve against it.
     private(set) var projects: [RecentProject] = []
-    /// The builds found on this Mac, which is what Settings offers to choose between.
-    private(set) var installedBuilds: [EditorBuild] = []
+    /// Where each installed build lives, resolved once: every render asks whether one is installed.
+    private(set) var installed: [EditorBuild.ID: URL] = [:]
 
     private let settings: AppSettings
     private let appIndex: AppIndex
@@ -31,7 +31,12 @@ final class RecentProjectCoordinator {
             ?? .visualStudioCode
     }
 
-    var isBuildInstalled: Bool { Self.applicationURL(for: build) != nil }
+    /// The builds found on this Mac, which is what Settings offers to choose between.
+    var installedBuilds: [EditorBuild] { EditorBuild.all.filter { installed[$0.id] != nil } }
+
+    var applicationURL: URL? { installed[build.id] }
+
+    var isBuildInstalled: Bool { applicationURL != nil }
 
     // MARK: - Feature presence
 
@@ -51,21 +56,26 @@ final class RecentProjectCoordinator {
         guard settings.recentProjectsEnabled, refreshTask == nil else { return }
         let build = build
         let home = URL(fileURLWithPath: NSHomeDirectory())
-        let applicationURL = Self.applicationURL(for: build)
+        let applicationURL = applicationURL
         refreshTask = Task {
             let found = await Task.detached {
                 RecentProjectReader.read(
                     build: build, home: home, applicationURL: applicationURL)
             }.value
             refreshTask = nil
-            guard settings.recentProjectsEnabled, found != projects else { return }
+            guard settings.recentProjectsEnabled else { return }
+            // The picker moved while the read ran, so what came back is the wrong editor's list.
+            guard build == self.build else { return refresh() }
+            guard found != projects else { return }
             projects = found
         }
     }
 
     /// An editor installed or removed while Tinycast ran still has to reach the picker.
     func refreshInstalledBuilds() {
-        installedBuilds = EditorBuild.all.filter { Self.applicationURL(for: $0) != nil }
+        installed = EditorBuild.all.reduce(into: [:]) { found, build in
+            found[build.id] = applicationURL(for: build)
+        }
     }
 
     // MARK: - Browsing and opening
@@ -82,7 +92,7 @@ final class RecentProjectCoordinator {
         guard settings.recentProjectsEnabled else { return }
         paletteCoordinator.hidePalette(restoreFocus: false)
         let build = build
-        guard let application = Self.applicationURL(for: build) else {
+        guard let application = applicationURL else {
             Task {
                 await core.showNotice(
                     title: "\(build.name) Isn’t Installed",
@@ -136,20 +146,20 @@ final class RecentProjectCoordinator {
         return URL(string: "\(build.urlScheme)://vscode-remote/\(rest)")
     }
 
-    /// Launch Services first, so a build kept outside `/Applications` is still found.
-    static func applicationURL(for build: EditorBuild) -> URL? {
+    /// Launch Services first, so a build registering no scheme still turns up in the index's scan.
+    private func applicationURL(for build: EditorBuild) -> URL? {
         if let scheme = URL(string: build.urlScheme + "://"),
             let handler = NSWorkspace.shared.urlForApplication(toOpen: scheme)
         {
             return handler
         }
-        let folders = ["/Applications", NSHomeDirectory() + "/Applications"]
-        let candidates = folders.map { URL(fileURLWithPath: build.applicationPath(inside: $0)) }
-        return candidates.first { FileManager.default.fileExists(atPath: $0.path) }
+        return appIndex.apps.first {
+            $0.kind == .application && $0.url.lastPathComponent == build.bundleFileName
+        }?.url
     }
 
     func openEditor() {
-        guard let application = Self.applicationURL(for: build) else { return }
+        guard let application = applicationURL else { return }
         AppLauncher.launch(application)
     }
 }

@@ -70,8 +70,7 @@ struct RootPaletteView: View {
                 store: snippets, core: core, vm: vm, openActions: openActions)
         case .recentProjects:
             return RecentProjectsScreen(
-                coordinator: core.recentProjectCoordinator, core: core, vm: vm,
-                openActions: openActions)
+                coordinator: core.recentProjectCoordinator, vm: vm, openActions: openActions)
         case .emoji:
             return EmojiScreen(
                 index: emojiIndex, frequent: frequentEmoji, pinned: core.pinnedEmoji, core: core, vm: vm,

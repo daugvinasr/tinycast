@@ -83,6 +83,7 @@ struct RecentProjectTest {
             parsed.first { $0.isRemote }?.symbol == RecentProject.remoteSymbol)
 
         check("an unknown build id resolves to nothing", EditorBuild.named("emacs") == nil)
+        check("the default build is in the table", EditorBuild.all.contains(.visualStudioCode))
         check("every build id is unique", Set(EditorBuild.all.map(\.id)).count == EditorBuild.all.count)
         let code = EditorBuild.visualStudioCode
         let root = URL(fileURLWithPath: home)
@@ -92,7 +93,7 @@ struct RecentProjectTest {
                 == "/Users/ada/Library/Application Support/Code/User/globalStorage/state.vscdb")
         check(
             "the shared store is derived when product.json says nothing",
-            code.sharedStateDatabase(home: root).path
+            code.sharedStateDatabase(home: root, folderName: code.sharedFolderFallback).path
                 == "/Users/ada/.vscode-shared/sharedStorage/state.vscdb")
         check(
             "product.json's own name wins",

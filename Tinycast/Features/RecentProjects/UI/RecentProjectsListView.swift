@@ -25,13 +25,7 @@ struct RecentProjectsList: View {
                         )
                         .selectionFrame(project.id == selectedID)
                         .contentShape(Rectangle())
-                        .onTapGesture { onSelect(project) }
-                        .simultaneousGesture(
-                            TapGesture(count: 2).onEnded {
-                                onSelect(project)
-                                onActivate()
-                            }
-                        )
+                        .onRowClick(select: { onSelect(project) }, activate: onActivate)
                         .onRightClick { onActions(project) }
                     }
                 }

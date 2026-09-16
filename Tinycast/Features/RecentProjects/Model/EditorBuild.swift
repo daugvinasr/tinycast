@@ -4,7 +4,7 @@ import Foundation
 struct EditorBuild: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
-    /// The bundle under `/Applications`, which finds a build no URL scheme is registered for.
+    /// The bundle name, which finds a build no URL scheme is registered for.
     let applicationName: String
     /// The `Application Support` folder the build keeps `User/globalStorage` in.
     let supportFolder: String
@@ -12,10 +12,13 @@ struct EditorBuild: Identifiable, Hashable, Sendable {
     let dataFolder: String
     let urlScheme: String
 
+    /// What an unset preference means, and the build every other one is a fork of.
+    static let visualStudioCode = EditorBuild(
+        id: "code", name: "Visual Studio Code", applicationName: "Visual Studio Code",
+        supportFolder: "Code", dataFolder: ".vscode", urlScheme: "vscode")
+
     static let all: [EditorBuild] = [
-        EditorBuild(
-            id: "code", name: "Visual Studio Code", applicationName: "Visual Studio Code",
-            supportFolder: "Code", dataFolder: ".vscode", urlScheme: "vscode"),
+        visualStudioCode,
         EditorBuild(
             id: "code-insiders", name: "VS Code Insiders",
             applicationName: "Visual Studio Code - Insiders", supportFolder: "Code - Insiders",
@@ -40,14 +43,12 @@ struct EditorBuild: Identifiable, Hashable, Sendable {
             dataFolder: ".kiro", urlScheme: "kiro")
     ]
 
-    /// What an unset preference means, and the build every other one is a fork of.
-    static let visualStudioCode = all[0]
-
     static func named(_ id: String) -> EditorBuild? { all.first { $0.id == id } }
 
-    func applicationPath(inside folder: String) -> String {
-        folder + "/" + applicationName + ".app"
-    }
+    var bundleFileName: String { applicationName + ".app" }
+
+    /// The shared folder's name when the installed build isn't there for `product.json` to name it.
+    var sharedFolderFallback: String { dataFolder + "-shared" }
 
     func globalStorage(home: URL) -> URL {
         home.appending(path: "Library/Application Support/\(supportFolder)/User/globalStorage")
@@ -64,12 +65,7 @@ struct EditorBuild: Identifiable, Hashable, Sendable {
     }
 
     /// Where a current build keeps the list, shared across every profile and window.
-    func sharedStateDatabase(home: URL, folderName: String? = nil) -> URL {
-        home.appending(path: "\(folderName ?? dataFolder + "-shared")/sharedStorage/state.vscdb")
-    }
-
-    /// `product.json` names the shared folder outright, which a fork renames without warning.
-    static func productFile(applicationURL: URL) -> URL {
-        applicationURL.appending(path: "Contents/Resources/app/product.json")
+    func sharedStateDatabase(home: URL, folderName: String) -> URL {
+        home.appending(path: "\(folderName)/sharedStorage/state.vscdb")
     }
 }

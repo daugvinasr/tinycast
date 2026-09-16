@@ -3,7 +3,6 @@ import SwiftUI
 /// Search Recent Projects: the editor's own recently-opened list, filtered by the search field.
 struct RecentProjectsScreen: PaletteScreen {
     let coordinator: RecentProjectCoordinator
-    let core: AppCore
     let vm: PaletteState
     let openActions: () -> Void
 
@@ -27,8 +26,7 @@ struct RecentProjectsScreen: PaletteScreen {
 
     func actions(at selection: Int) -> PopoverMenuContent? {
         guard let project = project(at: selection) else { return nil }
-        return RecentProjectActionsMenu.content(
-            project: project, build: coordinator.build, core: core)
+        return RecentProjectActionsMenu.content(project: project, coordinator: coordinator)
     }
 
     func activate(at selection: Int) {
@@ -86,12 +84,12 @@ struct RecentProjectsScreen: PaletteScreen {
 @MainActor
 enum RecentProjectActionsMenu {
     static func content(
-        project: RecentProject, build: EditorBuild, core: AppCore
+        project: RecentProject, coordinator: RecentProjectCoordinator
     ) -> PopoverMenuContent {
-        let coordinator = core.recentProjectCoordinator
         var items = [
             PopoverMenuItem(
-                title: "Open in \(build.name)", systemImage: project.symbol, shortcut: "↵"
+                title: "Open in \(coordinator.build.name)", systemImage: project.symbol,
+                shortcut: "↵"
             ) { coordinator.open(project) }
         ]
         if !project.isRemote {

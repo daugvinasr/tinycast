@@ -30,16 +30,21 @@ enum RecentProjectReader {
         build: EditorBuild, home: URL, applicationURL: URL?
     ) -> [URL] {
         let shared = build.sharedStateDatabase(
-            home: home, folderName: applicationURL.flatMap(sharedFolderName(applicationURL:)))
+            home: home,
+            folderName: sharedFolderName(build: build, applicationURL: applicationURL))
         return [shared, build.stateDatabase(home: home)].filter {
             FileManager.default.fileExists(atPath: $0.path)
         }
     }
 
-    private static func sharedFolderName(applicationURL: URL) -> String? {
-        guard let data = try? Data(contentsOf: EditorBuild.productFile(applicationURL: applicationURL))
-        else { return nil }
-        return try? JSONDecoder().decode(ProductInfo.self, from: data).sharedDataFolderName
+    /// `product.json` names the shared folder outright, which a fork renames without warning.
+    private static func sharedFolderName(build: EditorBuild, applicationURL: URL?) -> String {
+        guard let applicationURL,
+            let data = try? Data(
+                contentsOf: applicationURL.appending(path: "Contents/Resources/app/product.json")),
+            let named = try? JSONDecoder().decode(ProductInfo.self, from: data).sharedDataFolderName
+        else { return build.sharedFolderFallback }
+        return named
     }
 
     /// A project deleted or on an unmounted volume is dead weight the editor never prunes.
