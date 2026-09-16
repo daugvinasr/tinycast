@@ -48,7 +48,7 @@ struct RecentProjectsSettingsView: View {
         .settingsScrollTarget(.recentProjects)
         .releasesFocusOnOutsideClick()
         // An editor can be installed or removed while Settings sits closed.
-        .task(id: settings.recentProjectsEnabled) {
+        .task {
             coordinator.refreshInstalledBuilds()
             coordinator.refresh()
         }

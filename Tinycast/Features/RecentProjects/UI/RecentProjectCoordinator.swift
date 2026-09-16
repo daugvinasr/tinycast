@@ -51,7 +51,7 @@ final class RecentProjectCoordinator {
         refresh()
     }
 
-    /// Re-read on every launcher open: the editor rewrites its list as each window closes.
+    /// Re-read on every browser open: the editor rewrites its list as each window closes.
     func refresh() {
         guard settings.recentProjectsEnabled, refreshTask == nil else { return }
         let build = build
