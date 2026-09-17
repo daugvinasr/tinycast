@@ -40,7 +40,7 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .quicklinks: return Quicklink.sfSymbol
         case .customCommandArguments: return CustomCommand.sfSymbol
         case .snippets: return "curlybraces"
-        case .recentProjects: return RecentProject.sfSymbol
+        case .recentProjects: return "clock.arrow.circlepath"
         case .extensionCommand: return "puzzlepiece.extension"
         }
     }

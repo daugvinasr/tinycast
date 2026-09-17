@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Search Recent Projects: the editor's own recently-opened list, filtered by the search field.
+/// Search Recent Projects: VS Code's own recently-opened list, filtered by the search field.
 struct RecentProjectsScreen: PaletteScreen {
     let coordinator: RecentProjectCoordinator
     let vm: PaletteState
@@ -13,7 +13,7 @@ struct RecentProjectsScreen: PaletteScreen {
         guard !query.isEmpty else { return coordinator.projects }
         return coordinator.projects.filter {
             $0.name.localizedCaseInsensitiveContains(query)
-                || ($0.path ?? $0.uri).localizedCaseInsensitiveContains(query)
+                || $0.path.localizedCaseInsensitiveContains(query)
         }
     }
 
@@ -34,9 +34,9 @@ struct RecentProjectsScreen: PaletteScreen {
         coordinator.open(project)
     }
 
-    /// ⌘↵ reveals, as it does in file search; a remote project has nothing here to reveal.
+    /// ⌘↵ reveals, as it does in file search.
     func secondary(at selection: Int) -> Bool {
-        guard let project = project(at: selection), !project.isRemote else { return false }
+        guard let project = project(at: selection) else { return false }
         coordinator.showInFinder(project)
         return true
     }
@@ -73,9 +73,7 @@ struct RecentProjectsScreen: PaletteScreen {
 
     /// A missing editor, an empty list and an over-narrow filter are three different problems.
     private var emptyMessage: String {
-        guard coordinator.isBuildInstalled else {
-            return "\(coordinator.build.name) isn’t installed"
-        }
+        guard coordinator.isInstalled else { return "Visual Studio Code isn’t installed" }
         return coordinator.projects.isEmpty ? "No recent projects" : "No matching projects"
     }
 }
@@ -86,24 +84,18 @@ enum RecentProjectActionsMenu {
     static func content(
         project: RecentProject, coordinator: RecentProjectCoordinator
     ) -> PopoverMenuContent {
-        var items = [
+        let items = [
             PopoverMenuItem(
-                title: "Open in \(coordinator.build.name)", systemImage: project.symbol,
-                shortcut: "↵"
-            ) { coordinator.open(project) }
+                title: "Open in Visual Studio Code", systemImage: project.symbol, shortcut: "↵"
+            ) { coordinator.open(project) },
+            PopoverMenuItem(
+                title: "Show in Finder", systemImage: "folder", startsSection: true,
+                shortcut: "⌘↵"
+            ) { coordinator.showInFinder(project) },
+            PopoverMenuItem(
+                title: "Copy Path", systemImage: "doc.on.clipboard", shortcut: "⌃⌘C"
+            ) { coordinator.copyPath(project) }
         ]
-        if !project.isRemote {
-            items.append(
-                PopoverMenuItem(
-                    title: "Show in Finder", systemImage: "folder", startsSection: true,
-                    shortcut: "⌘↵"
-                ) { coordinator.showInFinder(project) })
-        }
-        items.append(
-            PopoverMenuItem(
-                title: "Copy Path", systemImage: "doc.on.clipboard",
-                startsSection: project.isRemote, shortcut: "⌃⌘C"
-            ) { coordinator.copyPath(project) })
         return PopoverMenuContent(header: project.name, items: items)
     }
 }

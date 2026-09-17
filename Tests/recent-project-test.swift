@@ -16,7 +16,7 @@ struct RecentProjectTest {
 
         let home = "/Users/ada"
 
-        // The shape VS Code writes under `recently.opened`, entries newest first.
+        // The shape VS Code writes under `history.recentlyOpenedPathsList`, entries newest first.
         let recents = Data(
             """
             {"entries":[
@@ -30,10 +30,13 @@ struct RecentProjectTest {
             """.utf8)
 
         let parsed = RecentProject.parse(entriesIn: recents)
-        check("every openable entry is read", parsed.count == 4)
+        check("every openable entry is read", parsed.count == 3)
         check(
             "an untitled buffer and a shapeless entry fall out",
             !parsed.contains { $0.uri.hasPrefix("untitled:") })
+        check(
+            "a project on another Mac names nothing to open here",
+            !parsed.contains { $0.uri.hasPrefix("vscode-remote://") })
         check("a folder is a folder", parsed.first?.kind == .folder)
         check("a workspace comes from its configPath", parsed[1].kind == .workspace)
         check("a file is a file", parsed[2].kind == .file)
@@ -51,12 +54,6 @@ struct RecentProjectTest {
             RecentProject.parse(entriesIn: Data(#"{"entries":[{"folderUri":"file:///opt/src/api"}]}"#.utf8))
                 .first?.subtitle(home: home) == "/opt/src")
 
-        let remote = parsed[3]
-        check("a remote entry has no path on this Mac", remote.path == nil)
-        check("a remote entry is marked remote", remote.isRemote)
-        check("its host leads the subtitle", remote.subtitle(home: home) == "build01 · /srv")
-        check("its name is still the last component", remote.name == "api")
-
         // `storage.json` is the only record of a window a running build still has open.
         let storage = Data(
             """
@@ -71,34 +68,14 @@ struct RecentProjectTest {
         check("the window opened last comes first", open.first?.name == "fresh")
 
         let merged = RecentProject.merge([parsed, open])
-        check("a project listed twice appears once", merged.count == 5)
+        check("a project listed twice appears once", merged.count == 4)
         check("the first list decides the order", merged.first?.name == "tinycast")
         check("what only the second list knows is kept", merged.last?.name == "fresh")
 
         let project = parsed[0]
         check("a project is identified by its uri", project.id == project.uri)
         check("a folder draws a folder", project.symbol == "folder")
-        check(
-            "a remote project draws its host instead of its kind",
-            parsed.first { $0.isRemote }?.symbol == RecentProject.remoteSymbol)
-
-        check("an unknown build id resolves to nothing", EditorBuild.named("emacs") == nil)
-        check("the default build is in the table", EditorBuild.all.contains(.visualStudioCode))
-        check("every build id is unique", Set(EditorBuild.all.map(\.id)).count == EditorBuild.all.count)
-        let code = EditorBuild.visualStudioCode
-        let root = URL(fileURLWithPath: home)
-        check(
-            "the per-profile store sits under Application Support",
-            code.stateDatabase(home: root).path
-                == "/Users/ada/Library/Application Support/Code/User/globalStorage/state.vscdb")
-        check(
-            "the shared store is derived when product.json says nothing",
-            code.sharedStateDatabase(home: root, folderName: code.sharedFolderFallback).path
-                == "/Users/ada/.vscode-shared/sharedStorage/state.vscdb")
-        check(
-            "product.json's own name wins",
-            code.sharedStateDatabase(home: root, folderName: ".cursor-shared").path
-                == "/Users/ada/.cursor-shared/sharedStorage/state.vscdb")
+        check("a workspace draws a stack", parsed[1].symbol == "rectangle.stack")
 
         print(failures == 0 ? "\nALL PASSED" : "\n\(failures) failed")
         if failures > 0 { exit(1) }

@@ -4,57 +4,42 @@ import SQLite3
 // Spelled as the C macro in sqlite3.h, which isn't imported into Swift.
 private let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 
-/// Reads an editor's own recently-opened list. Read-only throughout: Tinycast never writes there.
+/// Reads VS Code's own recently-opened list. Read-only throughout: Tinycast never writes there.
 enum RecentProjectReader {
-    /// A current build writes the first key, a build from before shared storage the second.
-    private static let storageKeys = ["recently.opened", "history.recentlyOpenedPathsList"]
+    private static let storageKey = "history.recentlyOpenedPathsList"
 
-    nonisolated static func read(
-        build: EditorBuild, home: URL, applicationURL: URL?
-    ) -> [RecentProject] {
+    nonisolated static func read(home: URL) -> [RecentProject] {
         var lists: [[RecentProject]] = []
-        for database in databases(build: build, home: home, applicationURL: applicationURL) {
-            for key in storageKeys {
-                guard let data = value(of: key, in: database) else { continue }
-                lists.append(RecentProject.parse(entriesIn: data))
-            }
+        for database in databases(home: home) {
+            guard let data = value(of: storageKey, in: database) else { continue }
+            lists.append(RecentProject.parse(entriesIn: data))
         }
-        if let data = try? Data(contentsOf: build.storageFile(home: home)) {
+        if let data = try? Data(contentsOf: storageFile(home: home)) {
             lists.append(RecentProject.parse(openWindowsIn: data))
         }
         return RecentProject.merge(lists).filter(exists)
     }
 
     /// Shared first: the per-profile store is the older copy wherever both exist.
-    private static func databases(
-        build: EditorBuild, home: URL, applicationURL: URL?
-    ) -> [URL] {
-        let shared = build.sharedStateDatabase(
-            home: home,
-            folderName: sharedFolderName(build: build, applicationURL: applicationURL))
-        return [shared, build.stateDatabase(home: home)].filter {
+    private static func databases(home: URL) -> [URL] {
+        let shared = home.appending(path: ".vscode-shared/sharedStorage/state.vscdb")
+        return [shared, globalStorage(home: home).appending(path: "state.vscdb")].filter {
             FileManager.default.fileExists(atPath: $0.path)
         }
     }
 
-    /// `product.json` names the shared folder outright, which a fork renames without warning.
-    private static func sharedFolderName(build: EditorBuild, applicationURL: URL?) -> String {
-        guard let applicationURL,
-            let data = try? Data(
-                contentsOf: applicationURL.appending(path: "Contents/Resources/app/product.json")),
-            let named = try? JSONDecoder().decode(ProductInfo.self, from: data).sharedDataFolderName
-        else { return build.sharedFolderFallback }
-        return named
+    private static func globalStorage(home: URL) -> URL {
+        home.appending(path: "Library/Application Support/Code/User/globalStorage")
+    }
+
+    /// Windows VS Code still has open, recorded outside the recents list it writes on quit.
+    private static func storageFile(home: URL) -> URL {
+        globalStorage(home: home).appending(path: "storage.json")
     }
 
     /// A project deleted or on an unmounted volume is dead weight the editor never prunes.
     private static func exists(_ project: RecentProject) -> Bool {
-        guard let path = project.path else { return true }
-        return FileManager.default.fileExists(atPath: path)
-    }
-
-    private struct ProductInfo: Decodable {
-        let sharedDataFolderName: String?
+        FileManager.default.fileExists(atPath: project.path)
     }
 
     // MARK: - SQLite

@@ -59,8 +59,8 @@ keep it actively maintained. GitHub Sponsors isn't available in my country, so p
   input, the clipboard or the date.
 - **Apple Shortcuts** — search and run the shortcuts you built in the Shortcuts app, with aliases and
   global hotkeys.
-- **Recent projects** — reopen anything from VS Code, Cursor, Windsurf or another fork's own
-  recently-opened list, SSH remotes included.
+- **Recent projects** — reopen anything from VS Code's own recently-opened list, without leaving the
+  launcher.
 - **Snippets** — reusable Markdown templates with dynamic placeholders, arguments, nested references
   and optional keyword expansion.
 - **Custom commands** — run named shell commands through fuzzy search or their own global hotkeys.

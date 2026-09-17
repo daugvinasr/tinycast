@@ -119,7 +119,7 @@ enum CommandID: String, CaseIterable, Sendable {
         case .exportQuicklinks: return "square.and.arrow.up"
         case .searchSnippets: return "curlybraces"
         case .createSnippet: return "plus.rectangle.on.rectangle"
-        case .searchRecentProjects: return RecentProject.sfSymbol
+        case .searchRecentProjects: return "clock.arrow.circlepath"
         case .exportSettings: return "square.and.arrow.up"
         case .importSettings: return "square.and.arrow.down"
         case .importFromRaycast: return "arrow.down.doc"
