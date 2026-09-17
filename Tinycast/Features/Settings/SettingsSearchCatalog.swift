@@ -109,8 +109,7 @@ enum SettingsSearchCatalog {
 
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings
-        + systemActions + commands + quicklinks + appleShortcuts + recentProjects + fallbacks
-        + ai + quickActions + fileSearch
+        + systemActions + commands + quicklinks + appleShortcuts + fallbacks + ai + quickActions + fileSearch
         + notes
         + snippets + navigation + windowManagement + clipboard + emoji + calendar
         + extensions + permissions + backup + about
@@ -255,19 +254,6 @@ enum SettingsSearchCatalog {
         .init(
             group: .appleShortcutsShortcuts, "Aliases and shortcuts",
             keywords: ["alias", "hotkey", "hide"])
-    ]
-
-    private static let recentProjects: [SettingsSearchEntry] = [
-        .init(pane: .recentProjects, keywords: ["vs code", "vscode", "cursor", "editor", "folder"]),
-        .init(
-            .recentProjectsRecentProjects, "Open recent projects",
-            keywords: ["vs code", "vscode", "cursor", "workspace", "repository"]),
-        .init(
-            group: .recentProjectsCommands, "Recent project commands",
-            keywords: ["shortcut", "hotkey", "launcher", "browser"]),
-        .init(
-            .recentProjectsEditor, "Editor",
-            keywords: ["vs code", "vscode", "cursor", "windsurf", "vscodium", "build"])
     ]
 
     private static let fallbacks: [SettingsSearchEntry] = [

@@ -474,16 +474,6 @@ final class AppSettings {
         didSet { defaults.set(appleShortcutsEnabled, forKey: Key.appleShortcutsEnabled.rawValue) }
     }
 
-    /// Off means the editor's database is never opened, not merely that the rows are hidden.
-    var recentProjectsEnabled: Bool {
-        didSet { defaults.set(recentProjectsEnabled, forKey: Key.recentProjectsEnabled.rawValue) }
-    }
-
-    /// An `EditorBuild.id`; empty means the first build found on this Mac.
-    var recentProjectsEditor: String {
-        didSet { defaults.set(recentProjectsEditor, forKey: Key.recentProjectsEditor.rawValue) }
-    }
-
     /// Ask for a new window rather than a tab; off is the macOS default.
     var quicklinkOpensNewWindow: Bool {
         didSet {
@@ -661,8 +651,6 @@ final class AppSettings {
             defaults.object(forKey: Key.quicklinksShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.quicklinksShowInLauncher.rawValue)
         appleShortcutsEnabled = defaults.bool(forKey: Key.appleShortcutsEnabled.rawValue)
-        recentProjectsEnabled = defaults.bool(forKey: Key.recentProjectsEnabled.rawValue)
-        recentProjectsEditor = defaults.string(forKey: Key.recentProjectsEditor.rawValue) ?? ""
         quicklinkOpensNewWindow = defaults.bool(forKey: Key.quicklinkOpensNewWindow.rawValue)
         quicklinkSelectionFallback =
             defaults.string(forKey: Key.quicklinkSelectionFallback.rawValue)
